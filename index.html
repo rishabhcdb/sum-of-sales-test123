@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sales Summary test123</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: sans-serif;
+            padding: 20px;
+        }
+        #total-sales {
+            font-size: 2em;
+            font-weight: bold;
+            color: #007bff;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Sales Summary</h1>
+        <p>Total Sales: <span id="total-sales"></span></p>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            fetch('data:text/csv;base64,UHJvZHVjdCxSZWdpb24sU2FsZXMKTGFwdG9wLE5vcnRoLDE1MDAuNTAKTW91c2UsU291dGgsMjUuOTkKS2V5Ym9hcmQsRWFzdCw4OS45OQpNb25pdG9yLFdlc3QsMzUwLjAwCkxhcHRvcCxTb3V0aCwxNDk5Ljk5Ck1vdXNlLE5vcnRoLDI0LjUwCktleWJvYXJkLFdlc3QsOTUuMDAKTW9uaXRvcixFYXN0LDM3NS4yNQ==')
+                .then(response => response.text())
+                .then(csvText => {
+                    const parsed = Papa.parse(csvText, {
+                        header: true,
+                        dynamicTyping: true,
+                        skipEmptyLines: true,
+                        delimitersToGuess: [',', '\t', '|']
+                    });
+
+                    console.log("Parsed Data:", parsed);
+
+                    if (parsed.data && parsed.data.length > 0) {
+                        const headers = Object.keys(parsed.data[0]).map(k => k.trim());
+                        const salesColumn = headers.find(header => header.toLowerCase() === 'sales');
+
+                        if (salesColumn) {
+                            const totalSales = parsed.data.reduce((sum, row) => sum + (parseFloat(row[salesColumn]) || 0), 0);
+                            document.getElementById('total-sales').textContent = totalSales.toFixed(2);
+                        } else {
+                            document.getElementById('total-sales').textContent = 'Sales column not found';
+                        }
+                    } else {
+                        document.getElementById('total-sales').textContent = 'No data found';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching or parsing CSV:', error);
+                    document.getElementById('total-sales').textContent = 'Error loading data';
+                });
+        });
+    </script>
+</body>
+</html>
