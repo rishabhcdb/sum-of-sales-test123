@@ -1,15 +1,14 @@
-# Publish a single-page site that fetches data.csv from attachments, sums its sale
+# Add a Bootstrap table #product-sales that lists each product with its total sale
 
 ## Overview
 Auto-generated application built with LLM App Builder.
 
 ## Task Description
-Publish a single-page site that fetches data.csv from attachments, sums its sales column, sets the title to "Sales Summary test123", displays the total inside #total-sales, and loads Bootstrap 5 from jsdelivr.
+Add a Bootstrap table #product-sales that lists each product with its total sales and keeps #total-sales accurate after render.
 
 ## Evaluation Criteria
-- document.title === 'Sales Summary test123'
-- !!document.querySelector("link[href*='bootstrap']")
-- Math.abs(parseFloat(document.querySelector('#total-sales').textContent) - 3961.22) < 0.01
+- document.querySelectorAll('#product-sales tbody tr').length >= 1
+- (() => { const rows = [...document.querySelectorAll('#product-sales tbody tr td:last-child')]; const sum = rows.reduce((acc, cell) => acc + parseFloat(cell.textContent), 0); return Math.abs(sum - 3961.22) < 0.01; })()
 
 ## Technology
 - HTML5, CSS3, JavaScript
